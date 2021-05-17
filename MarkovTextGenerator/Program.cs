@@ -17,7 +17,7 @@ namespace MarkovTextGenerator
 
             Console.WriteLine("Enter some text I can learn from (enter single ! to finish): ");
 
-            // LoadText("Sample.txt", chain);
+            LoadText("Sample.txt", chain);
 
             while (true)
             {
@@ -38,9 +38,23 @@ namespace MarkovTextGenerator
             Console.WriteLine("Done learning!  Now give me a word and I'll tell you what comes next.");
             Console.Write("> ");
 
-            String word = Console.ReadLine();
-            String nextWord = chain.GetNextWord(word);
-            Console.WriteLine("I predict the next word will be " + nextWord);
+            String nextWord;
+            String word;
+            String sentence;
+            while (true){
+                word = Console.ReadLine();
+                sentence = word;
+                for (int i = 0; i < 100; i++)
+                {
+                    nextWord = chain.GetNextWord(word);
+                    if (nextWord == "") break;
+                    //Console.WriteLine("I predict the next word will be " + nextWord);
+                    //Console.WriteLine(" " + nextWord);
+                    sentence += " " + nextWord;
+                    word = nextWord;
+                }
+                Console.WriteLine(sentence + ".");
+            }
         }
 
         static void LoadText(string filename, Chain chain)

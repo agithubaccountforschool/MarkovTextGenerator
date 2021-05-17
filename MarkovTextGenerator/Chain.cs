@@ -10,12 +10,14 @@ namespace MarkovTextGenerator
     {
         public Dictionary<String, List<Word>> words;
         private Dictionary<String, int> sums;
+        private List<Word> startingWords;
         private Random rand;
 
         public Chain ()
         {
             words = new Dictionary<String, List<Word>>();
             sums = new Dictionary<string, int>();
+            startingWords = new List<Word>();
             rand = new Random(System.Environment.TickCount);
         }
 
@@ -42,6 +44,12 @@ namespace MarkovTextGenerator
 
         public void AddString (String sentence)
         {
+            string[] subStrings = sentence.Split(' ','.');
+            for (var i = 0; i < subStrings.Length-1; i++)
+            {
+                if (subStrings[i]!=""||true) AddPair(subStrings[i], subStrings[i + 1]);
+            }
+            AddPair(subStrings[subStrings.Length - 1], "");
             // TODO: Break sentence up into word pairs
             // TODO: Add each word pair to the chain
             // TODO: The last word of any sentence will be paired up with
@@ -89,15 +97,28 @@ namespace MarkovTextGenerator
         /// <returns></returns>
         public String GetNextWord (String word)
         {
+            if (sums.ContainsKey(word))
+            {
+                //Console.WriteLine(sums[word]);
+            }
             if (words.ContainsKey(word))
             {
                 List<Word> choices = words[word];
                 double test = rand.NextDouble();
-
-                Console.WriteLine("I picked the number " + test); 
+                double total = 0;
+                //Console.WriteLine("I picked the number " + test); 
+                for(int i=0;i < choices.Count; i++)
+                {
+                    total += choices[i].Probability;
+                    //Console.WriteLine(choices[i] + " with probability " + choices[i].Probability + " sum " + total);
+                    if (total > test)
+                    {
+                        return choices[i].ToString();
+                    }
+                }
             }
 
-            return "idkbbq";
+            return "none";
         }
 
         /// <summary>
@@ -106,7 +127,7 @@ namespace MarkovTextGenerator
         /// </summary>
         /// <param name="startingWord"></param>
         /// <returns></returns>
-        public static String GenerateSentence(string startingWord)
+        public String GenerateSentence(string startingWord)
         {
             return "";
         }
