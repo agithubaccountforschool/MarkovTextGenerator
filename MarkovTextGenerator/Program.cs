@@ -39,21 +39,10 @@ namespace MarkovTextGenerator
             Console.Write("> ");
 
             String nextWord;
-            String word;
-            String sentence;
+            String word = chain.GetRandomStartingWord();
             while (true){
+                Console.WriteLine(chain.GenerateSentence(word));
                 word = Console.ReadLine();
-                sentence = word;
-                for (int i = 0; i < 100; i++)
-                {
-                    nextWord = chain.GetNextWord(word);
-                    if (nextWord == "") break;
-                    //Console.WriteLine("I predict the next word will be " + nextWord);
-                    //Console.WriteLine(" " + nextWord);
-                    sentence += " " + nextWord;
-                    word = nextWord;
-                }
-                Console.WriteLine(sentence + ".");
             }
         }
 

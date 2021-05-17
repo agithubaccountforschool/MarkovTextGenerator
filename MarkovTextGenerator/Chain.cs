@@ -10,14 +10,14 @@ namespace MarkovTextGenerator
     {
         public Dictionary<String, List<Word>> words;
         private Dictionary<String, int> sums;
-        private List<Word> startingWords;
+        private List<String> startingWords;
         private Random rand;
 
         public Chain ()
         {
             words = new Dictionary<String, List<Word>>();
             sums = new Dictionary<string, int>();
-            startingWords = new List<Word>();
+            startingWords = new List<String>();
             rand = new Random(System.Environment.TickCount);
         }
 
@@ -29,7 +29,7 @@ namespace MarkovTextGenerator
         /// <returns></returns>
         public String GetRandomStartingWord ()
         {
-            return words.Keys.ElementAt(rand.Next() % words.Keys.Count);
+            return startingWords[rand.Next(startingWords.Count)];
         }
 
         // Adds a sentence to the chain
@@ -45,9 +45,25 @@ namespace MarkovTextGenerator
         public void AddString (String sentence)
         {
             string[] subStrings = sentence.Split(' ','.');
-            for (var i = 0; i < subStrings.Length-1; i++)
+            for (var i = 0; i < subStrings.Length - 1; i++)
             {
-                if (subStrings[i]!=""||true) AddPair(subStrings[i], subStrings[i + 1]);
+                if (subStrings[i] != "" || true) AddPair(subStrings[i], subStrings[i + 1]);
+                if (subStrings[i].Length > 0)
+                {
+                    if (char.IsUpper(subStrings[i][0]) & i>1)
+                    {
+                        if (subStrings[i-1]=="")
+                        {
+                            startingWords.Add(subStrings[i]);
+                            //Console.WriteLine(subStrings[i]);
+                        }
+                    }
+                    if (char.IsUpper(subStrings[i][0]) & i==0)
+                    {
+                        startingWords.Add(subStrings[i]);
+                        //Console.WriteLine(subStrings[i]);
+                    }
+                }
             }
             AddPair(subStrings[subStrings.Length - 1], "");
             // TODO: Break sentence up into word pairs
@@ -118,7 +134,7 @@ namespace MarkovTextGenerator
                 }
             }
 
-            return "none";
+            return "there is no word";
         }
 
         /// <summary>
@@ -129,7 +145,18 @@ namespace MarkovTextGenerator
         /// <returns></returns>
         public String GenerateSentence(string startingWord)
         {
-            return "";
+            string sentence = startingWord;
+            string thisWord = startingWord;
+            for (int i = 0; i < 100; i++)
+            {
+                string nextWord = GetNextWord(thisWord);
+                if (nextWord == "") break;
+                //Console.WriteLine("I predict the next word will be " + nextWord);
+                //Console.WriteLine(" " + nextWord);
+                sentence += " " + nextWord;
+                thisWord = nextWord;
+            }
+            return sentence + ".";
         }
         
         /// <summary>
